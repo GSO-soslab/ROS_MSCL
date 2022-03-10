@@ -328,6 +328,7 @@ namespace Microstrain
   float m_curr_filter_att_uncert_yaw;
 
   //IMU Publishers
+  ros::Publisher m_calib_pub;
   ros::Publisher m_imu_pub;
   ros::Publisher m_mag_pub;
   ros::Publisher m_gps_corr_pub;
@@ -359,6 +360,7 @@ namespace Microstrain
   ros::Subscriber m_external_gps_time_sub;
 
   //IMU Messages
+  sensor_msgs::TimeReference m_calib_msg;
   sensor_msgs::Imu           m_imu_msg;
   sensor_msgs::MagneticField m_mag_msg;
   mscl_msgs::GPSCorrelationTimestampStamped m_gps_corr_msg;
@@ -395,6 +397,7 @@ namespace Microstrain
   
   //Publish data flags
   bool m_publish_imu;
+  bool m_publish_calib;
   bool m_publish_gps_corr;
   bool m_publish_gnss[NUM_GNSS];
   bool m_publish_filter;

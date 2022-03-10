@@ -58,6 +58,7 @@ Microstrain::Microstrain()
   m_filter_frame_id = "sensor_wgs84_ned";
   m_filter_child_frame_id = "sensor";
   m_publish_imu = true;
+  m_publish_calib = false;
   m_publish_gps_corr = false;
   m_gps_leap_seconds = 18.0;
   m_publish_gnss[GNSS1_ID]= true;
@@ -194,6 +195,7 @@ void Microstrain::run()
 
   //IMU
   private_nh.param("publish_imu",           m_publish_imu, true);
+  private_nh.param("publish_calib",         m_publish_calib, false);
   private_nh.param("publish_gps_corr",      m_publish_gps_corr, false);
   private_nh.param("imu_data_rate",         m_imu_data_rate, 10);
   private_nh.param("imu_orientation_cov",   m_imu_orientation_cov, default_matrix);
@@ -1016,6 +1018,12 @@ void Microstrain::run()
       m_imu_pub = node.advertise<sensor_msgs::Imu>("imu/data", 100);
     }
 
+    if(m_publish_calib)
+    {
+      ROS_INFO("Publishing calibration data.");
+      m_calib_pub = node.advertise<sensor_msgs::TimeReference>("imu/calib", 100);
+    }
+
     //Publish IMU GPS correlation data, if enabled
     if(m_publish_imu && m_publish_gps_corr)
     {
@@ -1521,6 +1529,10 @@ void Microstrain::parse_imu_packet(const mscl::MipDataPacket &packet)
   
   //Handle time
   uint64_t time = packet.collectedTimestamp().nanoseconds();
+  //Calibration IO time
+  m_calib_msg.time_ref = ros::Time().fromNSec(time);
+
+
   
   //Check if the user wants to use the device timestamp instead of PC collected time
   if(packet.hasDeviceTime() && m_use_device_timestamp) 
@@ -1533,6 +1545,10 @@ void Microstrain::parse_imu_packet(const mscl::MipDataPacket &packet)
   m_imu_msg.header.stamp    = ros::Time().fromNSec(time);
   m_imu_msg.header.frame_id = m_imu_frame_id;
   
+  //Calibration header timestamp: as same as IMU timestamp
+  m_calib_msg.header.stamp = ros::Time().fromNSec(time);
+
+
   //Magnetometer timestamp
   m_mag_msg.header      = m_imu_msg.header;
 
@@ -1679,6 +1695,10 @@ void Microstrain::parse_imu_packet(const mscl::MipDataPacket &packet)
   if(m_publish_gps_corr)
     m_gps_corr_pub.publish(m_gps_corr_msg);
 
+
+  if(m_publish_calib) 
+    m_calib_pub.publish(m_calib_msg);
+  
   if(m_publish_imu)
   {
     m_imu_pub.publish(m_imu_msg);
@@ -2484,8 +2504,7 @@ void Microstrain::external_gps_time_callback(const sensor_msgs::TimeReference& t
       m_inertial_device->setGPSTimeUpdate(mscl::MipTypes::TimeFrame::TIME_FRAME_WEEKS, weeks);
       m_inertial_device->setGPSTimeUpdate(mscl::MipTypes::TimeFrame::TIME_FRAME_SECONDS, secs);
 
-      ROS_INFO("GPS Update: w%i, s%i",
-               weeks, secs);
+      ROS_INFO("GPS Update: w%i, s%i", weeks, secs);
     }
     catch(mscl::Error &e)
     {
