@@ -2504,7 +2504,7 @@ void Microstrain::external_gps_time_callback(const sensor_msgs::TimeReference& t
       m_inertial_device->setGPSTimeUpdate(mscl::MipTypes::TimeFrame::TIME_FRAME_WEEKS, weeks);
       m_inertial_device->setGPSTimeUpdate(mscl::MipTypes::TimeFrame::TIME_FRAME_SECONDS, secs);
 
-      ROS_INFO("GPS Update: w%i, s%i", weeks, secs);
+      ROS_INFO_ONCE("GPS Update: w%i, s%i", weeks, secs);
     }
     catch(mscl::Error &e)
     {
