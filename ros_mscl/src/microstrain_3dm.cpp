@@ -1546,7 +1546,9 @@ void Microstrain::parse_imu_packet(const mscl::MipDataPacket &packet)
   m_imu_msg.header.frame_id = m_imu_frame_id;
   
   //Calibration header timestamp: as same as IMU timestamp
+  m_calib_msg.header.seq = m_imu_valid_packet_count;
   m_calib_msg.header.stamp = ros::Time().fromNSec(time);
+  m_calib_msg.header.frame_id = m_imu_frame_id;
 
 
   //Magnetometer timestamp
