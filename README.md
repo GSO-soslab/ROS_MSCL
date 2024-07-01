@@ -8,13 +8,17 @@ MSCL is developed by [LORD Sensing - Microstrain](http://microstrain.com) in Wil
 ## Build Instructions
 
 #### MSCL
-MSCL pre-built packages can be found here: [MSCL Packages](https://github.com/LORD-MicroStrain/MSCL/releases/tag/v61.1.6)
-
-We do our best to keep ROS-MSCL up-to-date with the latest MSCL changes, but sometimes there is a delay. The currently supported version of MSCL is [v61.1.6](https://github.com/LORD-MicroStrain/MSCL/releases/tag/v61.1.6)
-
-Install instructions can be found here: [How to Use MSCL](https://github.com/LORD-MicroStrain/MSCL/blob/master/HowToUseMSCL.md#linux)
-
-If you choose to install MSCL at a location other than /usr/share, [CMakeLists.txt](https://github.com/LORD-MicroStrain/ROS-MSCL/blob/master/CMakeLists.txt) will need to be updated with the install path.
+- MSCL pre-built packages can be found here: [MSCL Packages](https://github.com/LORD-MicroStrain/MSCL/releases/tag/v61.1.6) and Install instructions can be found here: [How to Use MSCL](https://github.com/LORD-MicroStrain/MSCL/blob/master/HowToUseMSCL.md#linux)
+- Our lab uses an old version of MSCL pre-built, the arm version can be found [here](https://github.com/GSO-soslab/ROS_MSCL/tree/main/dependency).
+  - install:
+    
+    `sudo dpkg -i c++-mscl_61.1.6_arm64.deb`
+    
+    `sudo apt install -f`
+  - uninstall:
+    
+    `sudo dpkg --remove c++-mscl_61.1.6_arm64.deb`
+- If you choose to install MSCL at a location other than /usr/share, [CMakeLists.txt](https://github.com/LORD-MicroStrain/ROS-MSCL/blob/master/CMakeLists.txt) will need to be updated with the install path.
 
 #### Building from source
 1. Install ROS and create a workspace: [Installing and Configuring Your ROS Environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
@@ -23,10 +27,11 @@ If you choose to install MSCL at a location other than /usr/share, [CMakeLists.t
 
 3. Locate and register the ros_mscl package: `rospack find ros_mscl`
 
-4. Build your workspace:
+4. Build your package:
         
         cd ~/your_workspace
-        catkin_make
+        rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y
+        catkin_make 
         source ~/your_workspace/devel/setup.bash
    The source command may need to be run in each terminal prior to launching a ROS node.
 #### Launch the node and publish data
