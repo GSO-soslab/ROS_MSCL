@@ -7,7 +7,7 @@
 
   <!-- Declare arguments with default values -->
   <arg name="name"            default = "gx5" />
-  <arg name="port"            default = "/dev/ttyACM0" />
+  <arg name="port"            default = "/dev/ttyACM1" />
   <arg name="baudrate"        default = "115200" />
   <arg name="debug"           default = "false" />
   <arg name="diagnostics"     default = "true" />
@@ -15,7 +15,7 @@
   <arg name="gnss1_frame_id"  default = "gnss1_antenna_wgs84" />
   <arg name="gnss2_frame_id"  default = "gnss2_antenna_wgs84" />
   <arg name="filter_frame_id" default = "sensor_wgs84" />
-  <arg name="use_enu_frame"   default = "false" />
+  <arg name="use_enu_frame"   default = "true" />
 
   <!-- ****************************************************************** -->
   <!-- Microstrain sensor node -->
@@ -338,7 +338,7 @@
           6 - GPIO 3 (provided by external source if supported)
           7 - GPIO 4 (provided by external source if supported)
      -->
-    <param name="filter_pps_source" value="1" type="int" />
+    <param name="filter_pps_source" value="0" type="int" />
 
     <param name="filter_enable_gnss_antenna_cal"     value="false" type="bool" />
     <param name="filter_gnss_antenna_cal_max_offset" value="0.1"   type="double" />
